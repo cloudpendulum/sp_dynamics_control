@@ -225,7 +225,7 @@ class PendulumPlant:
         traj = np.array(traj).T
         return traj
 
-    def run_on_hardware(self, tf, dt, controller=None, user_token = None, x0 = None):
+    def run_on_hardware(self, tf, dt, controller=None, user_token = None, x0 = None, preparation_time = 0.0):
 
         import time
         
@@ -237,9 +237,8 @@ class PendulumPlant:
 
         self.c = Client()
         
-        session_token, self.live_url = self.c.start_experiment(user_token, "SimplePendulum", tf, True)
-        print("Your experiment hash key is:", session_token)
-        
+        session_token, self.live_url = self.c.start_experiment(user_token, "SimplePendulum", tf, preparation_time, True)
+        print("Your session token is:", session_token)
         print("Your livestreaming URL is: ", self.live_url)
             
         if x0 is not None:
@@ -267,7 +266,7 @@ class PendulumPlant:
             print("Experiment will start from the state: ", [self.c.get_position(session_token), self.c.get_velocity(session_token)])
             tf = tf - meas_time
             print("Your remaining experimentation time is: ", tf, " seconds.")
-            
+                    
         n = int(tf / dt)
 
         meas_time_vec = np.zeros(n)
